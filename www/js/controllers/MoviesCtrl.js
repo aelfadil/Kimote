@@ -2,35 +2,12 @@ app.controller('MoviesCtrl', function($scope, $http, $stateParams, $location, $i
 
     $scope.movie_label = $stateParams.movieLabel;
 
-    //préparation de la requête http pour afficher la liste des films
+	// Récupération de la liste des films
 	$scope.showMovies = function() {
-		method = "VideoLibrary.GetMovies";
-		params = '{"limits":{"start":0,"end":9999},"properties":["art","rating","thumbnail","playcount","file","year","genre","plot","runtime"],"sort": {"order":"ascending","method":"label","ignorearticle":true}},"id":"libMovies"';
-		getMovies($http, method, params);
-	};
-
-/* On est censés récuperer la liste des films en passant par la factory de la manière suivante
-	$scope.showMovies = function() {
-		$scope.movies = Loader.getMovies();
-	};
-  */
-    //récupération des films
-    function getMovies($http, method, params) {
-
-		param_url = '/jsonrpc?request={"jsonrpc":"2.0","method":"' + method + '", "params":' + params + ', "id" : 1}';
-		complete_url = window.base_url + param_url;
-
-        $ionicLoading.show();
-		$http.jsonp(complete_url, {params: {callback: 'JSON_CALLBACK', format: 'json'}})
-		.success(function(data, status, headers, config) {
-            $ionicLoading.hide();
+		Loader.getMovies(function (data) {
 			$scope.movies = data.result.movies;
-		})
-		.error(function(data, status, headers, config) {
-            $ionicLoading.hide();
-            alert("Impossible de récupérer les films");
 		});
-	}
+	};
 
     //lire le film sur Kodi et redirection vers remote
 	$scope.playMovieOnKodi = function(file) {

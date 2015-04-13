@@ -1,4 +1,4 @@
-app.controller('TVShowsCtrl', function($scope, $http, $location, $stateParams, $ionicLoading, $sce) {
+app.controller('TVShowsCtrl', function($scope, $http, $location, $stateParams, $ionicLoading, $sce, Loader) {
     $scope.series_id = $stateParams.seriesId;
     $scope.series_label = $stateParams.seriesLabel;
 
@@ -16,6 +16,7 @@ app.controller('TVShowsCtrl', function($scope, $http, $location, $stateParams, $
 	};
 
 	//récupération des séries
+	/*
 	function getSeries($http, method, params) {
 
 		param_url = '/jsonrpc?request={"jsonrpc":"2.0","method":"' + method + '", "params":' + params + '}';
@@ -32,7 +33,7 @@ app.controller('TVShowsCtrl', function($scope, $http, $location, $stateParams, $
             alert("Impossible de récupérer les séries TV");
 		});
 	}
-
+*/
     //préparation de la requête http pour afficher la liste des saisons d'une série
 	$scope.showSeasons = function(tvshowid) {
 		method = "VideoLibrary.GetSeasons";
@@ -40,7 +41,7 @@ app.controller('TVShowsCtrl', function($scope, $http, $location, $stateParams, $
 
 		getSeasons($http, method, params);
 	};
-
+/*
 	function getSeasons($http, method, params) {
 
 		param_url = '/jsonrpc?request={"jsonrpc":"2.0","method":"' + method + '", "params":' + params + '}';
@@ -57,7 +58,7 @@ app.controller('TVShowsCtrl', function($scope, $http, $location, $stateParams, $
             alert("Impossible de récupérer les saisons");
 		});
 	}
-
+*/
     //préparation de la requête http pour afficher la liste des épisodes d'une saison
 	$scope.showEpisodes = function (tvshowid,seasonid) {
 		method = "VideoLibrary.GetEpisodes";
@@ -65,7 +66,7 @@ app.controller('TVShowsCtrl', function($scope, $http, $location, $stateParams, $
 
 		getEpisodes($http, method, params);
 	};
-
+/*
 	function getEpisodes($http, method, params) {
 
 		param_url = '/jsonrpc?request={"jsonrpc":"2.0","method":"' + method + '", "params":' + params + '}';
@@ -82,7 +83,7 @@ app.controller('TVShowsCtrl', function($scope, $http, $location, $stateParams, $
             alert("Impossible de récupérer les épisodes");
 		});
 	}
-
+*/
     $scope.showEpisodeDetails = function(episodeid) {
         method = "VideoLibrary.GetEpisodeDetails";
         params = '{"episodeid":' + episodeid + ', "properties": ["title","runtime","rating","plot","season","episode","tvshowid","file","showtitle","thumbnail","fanart"]}, "id": "libTvShows"';

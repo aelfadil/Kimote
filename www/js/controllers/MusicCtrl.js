@@ -1,4 +1,4 @@
-app.controller('MusicCtrl', function($scope, $http, $stateParams, $location, $ionicLoading) {
+app.controller('MusicCtrl', function($scope, $http, $stateParams, $location, $ionicLoading, Loader) {
 
     $scope.artist_label = $stateParams.artistLabel;
     $scope.artist_id = $stateParams.artistId;
@@ -7,76 +7,22 @@ app.controller('MusicCtrl', function($scope, $http, $stateParams, $location, $io
     $scope.album_id = $stateParams.albumId;
 
     $scope.showArtists = function() {
-		method = "AudioLibrary.GetArtists";
-		params =  '{"properties":["style","description","born","yearsactive","died","thumbnail","genre","fanart"],"limits":{"start":1,"end":2000}},"id":"libMusic"';
-
-		getArtists($http, method, params);
-	};
-
-	function getArtists($http, method, params) {
-
-		param_url = '/jsonrpc?request={"jsonrpc":"2.0","method":"' + method + '", "params":' + params + '}';
-		complete_url = window.base_url + param_url;
-
-        $ionicLoading.show();
-		$http.jsonp(complete_url, {params: {callback: 'JSON_CALLBACK', format: 'json'}})
-		.success(function(data, status, headers, config) {
-            $ionicLoading.hide();
+    	Loader.getArtists(function (data) {
 			$scope.artists = data.result.artists;
-		})
-		.error(function(data, status, headers, config) {
-            $ionicLoading.hide();
-            alert("Impossible de récupérer les artistes");
 		});
-	}
+	};
 
     $scope.showAlbums = function(artistid) {
-		method = "AudioLibrary.GetAlbums";
-        params = '{"limits":{"start":0,"end":9999},"properties":["playcount","artist","genre","rating","thumbnail","year","mood","style"],"sort":{"order":"ascending","method":"album","ignorearticle":true},"filter":{"artistid":' + artistid + '}},"id":"libAlbums"}';
-
-		getAlbums($http, method, params);
-	};
-
-	function getAlbums($http, method, params) {
-
-		param_url = '/jsonrpc?request={"jsonrpc":"2.0","method":"' + method + '", "params":' + params + '}';
-		complete_url = window.base_url + param_url;
-
-        $ionicLoading.show();
-		$http.jsonp(complete_url, {params: {callback: 'JSON_CALLBACK', format: 'json'}})
-		.success(function(data, status, headers, config) {
-            $ionicLoading.hide();
+		Loader.getAlbums(artistid ,function (data) {
 			$scope.albums = data.result.albums;
-		})
-		.error(function(data, status, headers, config) {
-            $ionicLoading.hide();
-            alert("Impossible de récupérer les albums");
 		});
-	}
+	};
 
     $scope.showSongs = function(albumid) {
-		method = "AudioLibrary.GetSongs";
-		params = '{"limits":{"start":0,"end":9999},"properties":["file","artist","duration","album","albumid","track","playcount"],"sort":{"order":"ascending","method":"track","ignorearticle":true},"filter":{"albumid":' + albumid + '}},"id":"libSongs"}';
-
-		getSongs($http, method, params);
-	};
-
-	function getSongs($http, method, params) {
-
-		param_url = '/jsonrpc?request={"jsonrpc":"2.0","method":"' + method + '", "params":' + params + '}';
-		complete_url = window.base_url + param_url;
-
-        $ionicLoading.show();
-		$http.jsonp(complete_url, {params: {callback: 'JSON_CALLBACK', format: 'json'}})
-		.success(function(data, status, headers, config) {
-            $ionicLoading.hide();
+    	Loader.getSongs(albumid ,function (data) {
 			$scope.songs = data.result.songs;
-		})
-		.error(function(data, status, headers, config) {
-            $ionicLoading.hide();
-            alert("Impossible de récupérer les titres");
 		});
-	}
+	};
 
     $scope.playSong = function(file) {
 
