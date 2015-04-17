@@ -478,14 +478,20 @@ app.controller('PicsCtrl', function($scope, $http, Requester) {
 
 app.controller('RemoteCtrl', function($scope,$http, $stateParams, $location, $ionicPopup, $timeout, Sounder, Manager, Runtime, Requester) {
 
-$scope.scanAuto= function (){
-   
-        ZeroConf.watch("_http._tcp.local.", function(users){
-            $scope.users=users;
-        alert(users.service.name);
-     
-    }) 
-    };
+	$scope.scanAuto= function (){
+	   
+	          ZeroConf.list("_http._tcp.local.",5000,function(users){
+	           $scope.users=users.service;
+	        alert(users.service);
+	     
+	    },function(users){
+	            
+	        alert("no found");
+	     
+	    })
+	     
+	    }) 
+	    };
 
 
 
