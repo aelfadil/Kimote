@@ -38,10 +38,8 @@ app.controller('FilesCtrl', function($scope, $http, $ionicLoading) {
             
             if ( !('result' in data)) {
 	            // La destination est trop proche de / : accès interdit. Revenir au début
-	            console.log("goto start")
 	            $scope.getStart();
             } else {
-            	console.log("goto destination")
 				$scope.files = data.result.files;
 				path = dir;
 			}
@@ -55,23 +53,7 @@ app.controller('FilesCtrl', function($scope, $http, $ionicLoading) {
 		if (file.filetype == "directory") {
 			getDir(file);
 		} else if (file.filetype == "file") {
-			switch (file.type) {
-				case "movie" : 
-					console.log("It's a movie");
-					break;
-				case "episode" : 
-					console.log("It's a TV Show");
-					break;
-				case "song" : 
-					console.log("Get that music played !");
-					break;
-				case "picture" :
-					console.log("Display this picture !!");
-					break;
-				default : 
-					console.log("File");
-					break;
-			}
+			console.log("regular file ");
 		}
 	}
 
