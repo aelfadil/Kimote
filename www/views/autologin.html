@@ -2,21 +2,20 @@
 	<ion-header-bar class="bar bar-header bar-positive">
 		<h1 class="title">Connexion Automatique</h1>
 		<div class="buttons">
+		    <button class="button button-icon ion-search" ng-click="scanAuto();loadingScanAuto()"></button>
 			<button class="button button-clear" ng-click="closeAuto()">Fermer</button>
 		</div>
 	</ion-header-bar>
-	<ion-content class="padding">
- 		<div class="col">
-       		<button class="btn-custom button button-icon ion-power" ng-click="scanAuto()"></button>
-        </div>
-        <ion-list>
-             <a ng-repeat="user in users" >
-              {{user.description}}</br>
-               {{user.name}}</br>  
+        <ion-content>
+        	<div class="list">
+             <a ng-repeat="user in users" href="#/{{user.name}}"
+           class="item item-thumbnail-left" >
+               <h2>{{user.name}}</h2>
+              <h4>{{user.addresses[0]}} : {{user.port}}</h4>
             </a>
-        </ion-list>
             </div>
-    </ion-content>
+        </ion-content>
+            </div>
 
 
 

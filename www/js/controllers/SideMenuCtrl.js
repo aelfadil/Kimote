@@ -56,6 +56,21 @@ app.controller('SideMenuCtrl', function($scope, $cookieStore, $ionicModal, $ioni
 		$scope.modal.hide();
 	};
 
+	$scope.scanAuto= function (){
+	        ZeroConf.list("_http._tcp.local.",5000,function(users){
+	        $scope.users=users.service;
+	    },function(users){
+	        alert("not found");
+	     
+	    }) 
+	    };
+
+	$scope.loadingScanAuto = function(){
+		$ionicLoading.show({
+      			duration: 5000
+    		 })
+	};
+
 		/* Vue modal pour la connexion*/
 	$ionicModal.fromTemplateUrl('views/autologin.html', {
 		scope: $scope

@@ -588,7 +588,7 @@ app.controller('RemoteCtrl', function($scope,$http, $stateParams, $location, $io
 	};
 });
 
-app.controller('SideMenuCtrl', function($scope, $cookieStore, $ionicModal, $ionicSideMenuDelegate, $ionicPopup, Logger, Sounder) {
+app.controller('SideMenuCtrl', function($scope, $cookieStore, $ionicModal, $ionicSideMenuDelegate, $ionicPopup, Logger, Sounder, $ionicLoading) {
 
 	/*************** bouton son ******************/
 
@@ -720,17 +720,19 @@ app.controller('SideMenuCtrl', function($scope, $cookieStore, $ionicModal, $ioni
 	/* Fonctions Auto Login */
 
 	$scope.scanAuto= function (){
-	   
-	          ZeroConf.list("_http._tcp.local.",5000,function(users){
-	           $scope.users=users.service;
-	        alert(users.service);
-	     
+	        ZeroConf.list("_http._tcp.local.",5000,function(users){
+	        $scope.users=users.service;
 	    },function(users){
-	            
-	        alert("no found");
+	        alert("not found");
 	     
 	    }) 
 	    };
+
+	$scope.loadingScanAuto = function(){
+		$ionicLoading.show({
+      			duration: 5000
+    		 })
+	};
 
 
 
