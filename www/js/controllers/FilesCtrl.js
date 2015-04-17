@@ -4,8 +4,9 @@ app.controller('FilesCtrl', function($scope, $http, $ionicLoading) {
 	$scope.title = "Mon titre";
 
 	$scope.getStart = function() {
+		// $scope.files = {};
+
 		method = "Files.GetSources";
-		// params = '{"media":"files","limits":{"start":1,"end":2000}},"sort":{"method":"label"}}'
 		params = '{"media":"files"}';
 
 		param_url = '/jsonrpc?request={"jsonrpc":"2.0","method":"' + method + '", "params":' + params + ',"id":2}';
@@ -25,8 +26,7 @@ app.controller('FilesCtrl', function($scope, $http, $ionicLoading) {
 
 	$scope.getDir = function(dir) {
 		method = "Files.GetDirectory";
-		// params = '{"directory":"'+dir+'","limits":{"start":1,"end":2000}},"sort":{"method":"file"}}';
-		params = '{"directory":"'+dir+'","media":"files"}}'; // special://profile/
+		params = '{"directory":"'+dir+'","media":"files"}}';
 
 		param_url = '/jsonrpc?request={"jsonrpc":"2.0","id":1,"method":"' + method + '", "params":' + params + ',"id":1}';
 		complete_url = window.base_url + param_url;
@@ -35,13 +35,16 @@ app.controller('FilesCtrl', function($scope, $http, $ionicLoading) {
 		$http.jsonp(complete_url, {params: {callback: 'JSON_CALLBACK', format: 'json'}})
 		.success(function(data, status, headers, config) {
             $ionicLoading.hide();
-            if (data.error.code == -32) {
+            
+            if ( !('result' in data)) {
 	            // La destination est trop proche de / : accès interdit. Revenir au début
-	            //getStart();
+	            console.log("goto start")
+	            $scope.getStart();
             } else {
-			}
+            	console.log("goto destination")
 				$scope.files = data.result.files;
 				path = dir;
+			}
 		})
 		.error(function(data, status, headers, config) {
             $ionicLoading.hide();
