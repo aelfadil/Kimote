@@ -38,3 +38,4 @@ branches:
     only:
         - master
         - release
+sudo: required
