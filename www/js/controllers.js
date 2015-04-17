@@ -478,23 +478,6 @@ app.controller('PicsCtrl', function($scope, $http, Requester) {
 
 app.controller('RemoteCtrl', function($scope,$http, $stateParams, $location, $ionicPopup, $timeout, Sounder, Manager, Runtime, Requester) {
 
-	$scope.scanAuto= function (){
-	   
-	          ZeroConf.list("_http._tcp.local.",5000,function(users){
-	           $scope.users=users.service;
-	        alert(users.service);
-	     
-	    },function(users){
-	            
-	        alert("no found");
-	     
-	    })
-	     
-	    }) 
-	    };
-
-
-
 	$scope.model = {};
 	$scope.paused = Manager.getPaused();
 	$scope.played = Manager.getPlayed();
@@ -733,6 +716,26 @@ app.controller('SideMenuCtrl', function($scope, $cookieStore, $ionicModal, $ioni
 	$scope.loginData.port = parseInt($cookieStore.get('port'));
 	$scope.loginData.username = $cookieStore.get('username');
 	$scope.loginData.password = $cookieStore.get('password');
+
+	/* Fonctions Auto Login */
+
+	$scope.scanAuto= function (){
+	   
+	          ZeroConf.list("_http._tcp.local.",5000,function(users){
+	           $scope.users=users.service;
+	        alert(users.service);
+	     
+	    },function(users){
+	            
+	        alert("no found");
+	     
+	    }) 
+	    };
+
+
+
+
+
 });
 
 app.controller('TVShowsCtrl', function($scope, $http, $location, $stateParams, $ionicLoading, $sce, Loader) {
