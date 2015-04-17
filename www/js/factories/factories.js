@@ -406,7 +406,7 @@ app.factory('Loader', function($http, $ionicLoading) {
 	var loader = {};
 
 	// Fonctions pour la vue musique
-	loader.getArtists = function ( callback) {
+	loader.getArtists = function (callback) {
 		method = "AudioLibrary.GetArtists";
 		params =  '{"properties":["style","description","born","yearsactive","died","thumbnail","genre","fanart"],"limits":{"start":1,"end":2000}},"id":"libMusic"';
 
@@ -451,7 +451,7 @@ app.factory('Loader', function($http, $ionicLoading) {
 		method = "AudioLibrary.GetSongs";
 		if (albumid == 0)
 			// params = '{"limits":{"start":0,"end":9999},"properties":["file","artist","duration","album","albumid","track","playcount"],"sort":{"order":"ascending","method":"track","ignorearticle":true},"id":"libSongs"}';
-			params = '{"limits":{"start":0,"end":9999},"properties":["file","artist","duration","album","albumid","track","playcount"],"sort":{"order":"ascending","method":"track","ignorearticle":true},"filter":{"albumid":"-1"}},"id":"libSongs"}';
+			params = '{"limits":{"start":0,"end":9999},"properties":["file","artist","duration","album","albumid","track","playcount"],"sort":{"order":"ascending","method":"track","ignorearticle":true},"filter":{"albumid":"0"}},"id":"libSongs"}';
 		else 
 			params = '{"limits":{"start":0,"end":9999},"properties":["file","artist","duration","album","albumid","track","playcount"],"sort":{"order":"ascending","method":"track","ignorearticle":true},"filter":{"albumid":' + albumid + '}},"id":"libSongs"}';
 

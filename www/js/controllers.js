@@ -1,25 +1,50 @@
 app.controller('FilesCtrl', function($scope, $http, $ionicLoading) {
 
-	$scope.path = "";
+	var path = "";
+	$scope.title = "Mon titre";
+
+	$scope.getStart = function() {
+		method = "Files.GetSources";
+		// params = '{"media":"files","limits":{"start":1,"end":2000}},"sort":{"method":"label"}}'
+		params = '{"media":"files"}';
+
+		param_url = '/jsonrpc?request={"jsonrpc":"2.0","method":"' + method + '", "params":' + params + ',"id":2}';
+		complete_url = window.base_url + param_url;
+
+        $ionicLoading.show();
+		$http.jsonp(complete_url, {params: {callback: 'JSON_CALLBACK', format: 'json'}})
+		.success(function(data, status, headers, config) {
+            $scope.files = data.result.sources;
+            $ionicLoading.hide();
+		})
+		.error(function(data, status, headers, config) {
+            $ionicLoading.hide();
+            alert("Impossible de récupérer les sources");
+		});
+	}
 
 	$scope.getDir = function(dir) {
 		method = "Files.GetDirectory";
-		params = '{"directory":"'+dir+'","limits":{"start":1,"end":2000}},"sort":{"method":"file"}}';
+		// params = '{"directory":"'+dir+'","limits":{"start":1,"end":2000}},"sort":{"method":"file"}}';
+		params = '{"directory":"'+dir+'","media":"files"}}'; // special://profile/
 
-		param_url = '/jsonrpc?request={"jsonrpc":"2.0","method":"' + method + '", "params":' + params + '}';
+		param_url = '/jsonrpc?request={"jsonrpc":"2.0","id":1,"method":"' + method + '", "params":' + params + ',"id":1}';
 		complete_url = window.base_url + param_url;
 
         $ionicLoading.show();
 		$http.jsonp(complete_url, {params: {callback: 'JSON_CALLBACK', format: 'json'}})
 		.success(function(data, status, headers, config) {
             $ionicLoading.hide();
-			$scope.files = data;
-			console.log(data);
-			$scope.path = $scope.path + dir;
+            if (data.error.code == -32) {
+	            // La destination est trop proche de / : accès interdit. Revenir au début
+	            //getStart();
+            } else {
+			}
+				$scope.files = data.result.files;
+				path = dir;
 		})
 		.error(function(data, status, headers, config) {
             $ionicLoading.hide();
-            alert("Impossible de récupérer les fichiers");
 		});
 	}
 
@@ -46,7 +71,97 @@ app.controller('FilesCtrl', function($scope, $http, $ionicLoading) {
 			}
 		}
 	}
+
+	// Reconstruit le chemin du parent puis lance getDirectory
+	$scope.getParent = function() {
+		var reg = new RegExp("/", "g");
+		var tmp = path.split(reg);
+		var dir = "";
+		for (var i = 1; i < tmp.length -2; i++) {
+			dir = dir+'/'+tmp[i];
+		}
+		$scope.getDir(dir+"/");
+	}
+
+	$scope.rmFile = function (file) {
+		console.log("Attemp to remove a file")
+	}
 });
+app.controller('MoviesCtrl', function($scope, $http, $stateParams, $location, $ionicLoading, $sce, Loader) {
+
+    $scope.movie_label = $stateParams.movieLabel;
+
+    //préparation de la requête http pour afficher la liste des films
+	$scope.showMovies = function() {
+		$scope.movies = Loader.getMovies();
+		console.log($scope.movies.size())
+		console.log($scope.movies[0].label);
+	};
+
+    //lire le film sur Kodi et redirection vers remote
+	$scope.playMovieOnKodi = function(file) {
+
+		method = "Player.Open";
+		params = '{"item":{"file":"' + file + '"}}';
+
+		param_url = '/jsonrpc?request={"jsonrpc":"2.0","method":"' + method + '", "params":' + params + '}';
+		complete_url = window.base_url + param_url;
+
+		$http.jsonp(complete_url, {params: {callback: 'JSON_CALLBACK', format: 'json'}})
+		.success(function(data, status, headers, config) {
+		})
+		.error(function(data, status, headers, config) {
+			alert("Impossible de lire le film");
+		});
+	};
+
+    $scope.getStreamInfo = function(file, poster) {
+        $scope.moviePath = encodeURIComponent(file);
+        $scope.streamUrl = window.base_url + '/vfs/' + $scope.moviePath;
+
+        poster = poster.replace("image://","");
+		$scope.posterUriDecoded = decodeURIComponent(poster);
+
+        console.log("streamUrl : " + $scope.streamUrl);
+
+        $scope.config = {
+            sources: [{
+                src: $sce.trustAsResourceUrl($scope.streamUrl),
+                type: "video/mp4"
+            }],
+            theme: "lib/videogular-themes-default/videogular.min.css",
+            plugins: {
+                poster: $scope.posterUriDecoded
+            }
+        };
+
+        return $scope.config;
+    };
+
+    //conversion du champ movie.runtime en heures
+	$scope.toHours = function(duration) {
+		var hours = Math.floor(duration/3600);
+		var minutes = Math.floor((duration - (hours*3600))/60);
+
+		if (minutes < 10) {
+			minutes = "0" + minutes;
+		}
+		var time = hours + 'h' + minutes;
+
+		return time;
+	};
+
+    //téléchargement l'image de présentation du film
+	$scope.getThumbnail = function(thumbnailUri) {
+		thumbnailUri = thumbnailUri.replace("image://","");
+		$scope.thumbnailUriDecoded = decodeURIComponent(thumbnailUri);
+
+		return $scope.thumbnailUriDecoded;
+	};
+
+    $scope.Math = window.Math;
+});
+
 app.controller('MoviesCtrl', function($scope, $http, $stateParams, $location, $ionicLoading, $sce, Loader) {
 
     $scope.movie_label = $stateParams.movieLabel;
@@ -131,12 +246,76 @@ app.controller('MusicCtrl', function($scope, $http, $stateParams, $location, $io
     $scope.album_id = $stateParams.albumId;
 
     $scope.showArtists = function() {
+		$scope.artists = Loader.getArtists();
+	};
+
+    $scope.showAlbums = function(artistid) {
+		$scope.albums = Loader.getAlbums(artistid);
+	};
+
+    $scope.showSongs = function(albumid) {
+    	$scope.songs = Loader.getSongs(albumid);
+	};
+
+    $scope.playSong = function(file) {
+
+		method = "Player.Open";
+		params = '{"item":{"file":"' + file + '"}}';
+
+		param_url = '/jsonrpc?request={"jsonrpc":"2.0","method":"' + method + '", "params":' + params + '}';
+		complete_url = window.base_url + param_url;
+
+		$http.jsonp(complete_url, {params: {callback: 'JSON_CALLBACK', format: 'json'}})
+		.success(function(data, status, headers, config) {
+			console.log("musique ok");
+			//$location.path("/remote"); // fixer le tab actif
+		})
+		.error(function(data, status, headers, config) {
+			alert("Impossible de lire le titre");
+		});
+	};
+
+    $scope.toMinutes = function(duration) {
+
+        var minutes = Math.floor((duration/60));
+        var seconds = duration - (minutes*60);
+
+        if (seconds < 10) {
+            seconds = "0" + seconds;
+        }
+
+        var time = minutes + ':' + seconds;
+        return time;
+    };
+
+    $scope.getThumbnailArtist = function(thumbnailUri) {
+		thumbnailUri = thumbnailUri.replace("image://","").replace("jpg/","jpg");
+		$scope.thumbnailUriDecoded = decodeURIComponent(thumbnailUri);
+
+		return $scope.thumbnailUriDecoded;
+	};
+
+    $scope.getThumbnailAlbum = function(thumbnailUri) {
+        thumbnailUri = thumbnailUri.replace("image://","");
+        thumbnailURIencoded = encodeURIComponent(thumbnailUri);
+        $scope.thumbnailUriComplete = window.base_url + '/image/image://' + thumbnailURIencoded;
+
+        return $scope.thumbnailUriComplete;
+    };
+
+});
+app.controller('MusicCtrl', function($scope, $http, $stateParams, $location, $ionicLoading, Loader) {
+
+    $scope.artist_label = $stateParams.artistLabel;
+    $scope.artist_id = $stateParams.artistId;
+
+    $scope.album_label = $stateParams.albumLabel;
+    $scope.album_id = $stateParams.albumId;
+
+    $scope.showArtists = function() {
     	Loader.getArtists(function (data) {
 			$scope.artists = data.result.artists;
 		});
-		Loader.getSongs(0, function (data) {
-			console.log(data.result.songs)
-		})
 	};
 
     $scope.showAlbums = function(artistid) {
@@ -443,6 +622,125 @@ app.controller('SideMenuCtrl', function($scope, $cookieStore, $ionicModal, $ioni
 	$scope.loginData.port = parseInt($cookieStore.get('port'));
     $scope.loginData.username = $cookieStore.get('username');
 	$scope.loginData.password = $cookieStore.get('password');
+});
+
+app.controller('TVShowsCtrl', function($scope, $http, $location, $stateParams, $ionicLoading, $sce, Loader) {
+    $scope.series_id = $stateParams.seriesId;
+    $scope.series_label = $stateParams.seriesLabel;
+
+    $scope.season_id = $stateParams.seasonId;
+
+    $scope.episode_id = $stateParams.episodeId;
+    $scope.episode_label = $stateParams.episodeLabel;
+
+    //préparation de la requête http pour afficher la liste des séries
+	$scope.showSeries = function() {
+		$scope.tvshows = Loader.getSeries();
+	};
+
+    //préparation de la requête http pour afficher la liste des saisons d'une série
+	$scope.showSeasons = function(tvshowid) {
+		$scope.seasons = Loader.getSeasons(tvshowid);
+	};
+
+    //préparation de la requête http pour afficher la liste des épisodes d'une saison
+	$scope.showEpisodes = function (tvshowid, seasonid) {
+		$scope.episodes = getEpisodes(tvshowid, seasonid);
+	};
+
+    $scope.showEpisodeDetails = function(episodeid) {
+        method = "VideoLibrary.GetEpisodeDetails";
+        params = '{"episodeid":' + episodeid + ', "properties": ["title","runtime","rating","plot","season","episode","tvshowid","file","showtitle","thumbnail","fanart"]}, "id": "libTvShows"';
+
+        getEpisodeDetails($http, method, params);
+    };
+
+    function getEpisodeDetails($http, method, params) {
+
+		param_url = '/jsonrpc?request={"jsonrpc":"2.0","method":"' + method + '", "params":' + params + '}';
+		complete_url = window.base_url + param_url;
+
+        $ionicLoading.show();
+		$http.jsonp(complete_url, {params: {callback: 'JSON_CALLBACK', format: 'json'}})
+		.success(function(data, status, headers, config) {
+            $ionicLoading.hide();
+			$scope.episodedetails = data.result.episodedetails;
+
+            $scope.getStreamInfo($scope.episodedetails.file);
+		})
+		.error(function(data, status, headers, config) {
+            $ionicLoading.hide();
+            alert("Impossible de récupérer l'épisode");
+		});
+	}
+
+    $scope.getStreamInfo = function(file) {
+
+        $scope.episodePath = encodeURIComponent(file);
+        $scope.streamUrl = window.base_url + '/vfs/' + $scope.episodePath;
+
+        $scope.config = {
+            sources: [{
+                src: $sce.trustAsResourceUrl($scope.streamUrl),
+                type: "video/mp4"
+            }],
+            theme: "lib/videogular-themes-default/videogular.min.css",
+        };
+
+        return $scope.config;
+    };
+
+
+    //lancer l'épisode cliqué
+	$scope.playEpisodeOnKodi = function(file) {
+
+		method = "Player.Open";
+		params = '{"item":{"file":"' + file + '"}}';
+
+		param_url = '/jsonrpc?request={"jsonrpc":"2.0","method":"' + method + '", "params":' + params + '}';
+		complete_url = window.base_url + param_url;
+
+		$http.jsonp(complete_url, {params: {callback: 'JSON_CALLBACK', format: 'json'}})
+		.success(function(data, status, headers, config) {
+			console.log("episode ok");
+			//$location.path("/remote"); // fixer le tab actif
+		})
+		.error(function(data, status, headers, config) {
+			alert("Impossible de lire l'épisode");
+		});
+	};
+
+    $scope.Math = window.Math;
+
+	//conversion de la durée d'un épisode
+	$scope.toHours = function(duration) {
+		//var sec_num = parseInt(duration, 10);
+		var hours = Math.floor(duration/3600);
+		var minutes = Math.floor((duration - (hours*3600))/60);
+		//var seconds = duration - (hours*3600) - (minutes*60);
+
+		if (minutes < 10) {
+			minutes = "0" + minutes;
+		}
+		var time = hours + 'h' + minutes;
+		return time;
+	};
+
+    //récupération du thumbnail de la série
+	$scope.getThumbnailSeries = function(thumbnailUri) {
+		thumbnailUri = thumbnailUri.replace("image://","").replace("jpg/","jpg");
+		$scope.thumbnailUriDecoded = decodeURIComponent(thumbnailUri);
+
+		return $scope.thumbnailUriDecoded;
+	};
+
+    //récupération du thumbnail d'une saison
+	$scope.getThumbnailSeason = function(thumbnailUri) {
+		thumbnailUri = thumbnailUri.replace("image://","").replace("jpg/","jpg");
+		$scope.thumbnailUriDecoded = decodeURIComponent(thumbnailUri);
+
+		return $scope.thumbnailUriDecoded;
+	};
 });
 
 app.controller('TVShowsCtrl', function($scope, $http, $location, $stateParams, $ionicLoading, $sce, Loader) {
