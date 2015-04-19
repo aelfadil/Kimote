@@ -1,24 +1,10 @@
-Grunt installé et foctionnel : 
+Grunt remplacé par basket.js pour le chargement des scripts : 
+	Il n'y a plusque 3 balises script dans index.html
+	Bonne nouvelle :  On a plus rien à faire quand on fait des modifs
+	Les fichiers à charger sont spécifiés dans le fichier main.js
+	/!\ : Attention aux dépendances pour les factories, si y'a factory1 qui dépend de factory2 alors il faudra spécifier factory2 avant factory1 dans main.js
 
-Sert à n'avoir qu'une poignée de balises <script> dans index.html. 
-Plus tard pourrait servir à la minification du code (augmente les perfs de l'appli)
+Fichier factories.js redécoupé en 1 fichier par factory 
+	On n'a plus à scroller pendant 3 heures pour retrouver une fonction perdue au milieu du fichier
 
-
-Il vous faut le client grunt sur votre pc, pour l'installer :
-
-	sudo npm install -g grunt-cli
-
-Une fois ceci effectué, à chaque modification d'un fichier en .js taper dans un terminal dans le dossier js: 
-
-	grunt
-
-Ça va créer un fichier controllers.js (concaténation de tous les controllers) et un fichier factories.js 
-(plus tard les factories seront découpées en plusieurs fichiers pour une modification plus aisée) 
-
-
-
-Nouvelle factory, Loader. Pas encore fonctionnelle :
-
-Utilisée pour charger les listes de films, musiques, séries. 
-Les fonctions n'arrivent pas à renvoyer les données que Kodi envoit.
-J'ai vérifié dans l'onglet network du débugger chrome, les données sont bien récupérées.
+Vue Files bientôt finie :)

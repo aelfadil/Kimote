@@ -6,7 +6,7 @@
     <div ng-init='getStart()'></div>
     <ion-content>
         <ion-list>
-            <a class="item item-icon-right" ng-repeat="file in files" ng-click="getDir(file.file)">
+            <a class="item item-icon-right" ng-repeat="file in files" ng-click="getFile(file)">
                 <h2>{{file.label}}</h2>
                 <!-- <i class="icon ion-trash-a icon-accessory" ng-click="rmFile(file.file)"> -->
                 <i class="icon ion-chevron-right icon-accessory"></i>

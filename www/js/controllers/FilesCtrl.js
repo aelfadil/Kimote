@@ -50,11 +50,17 @@ app.controller('FilesCtrl', function($scope, $http, $ionicLoading) {
 	}
 
 	$scope.getFile = function(file) {
-		if (file.filetype == "directory") {
-			getDir(file);
-		} else if (file.filetype == "file") {
-			console.log("regular file ");
+		if (file.filetype == "file") {
+			getFileType(file.file, function (type) {
+				if (type == "" ) {
+
+				}
+			})
+
+		} else {
+			$scope.getDir(file.file);
 		}
+
 	}
 
 	// Reconstruit le chemin du parent puis lance getDirectory
@@ -71,4 +77,16 @@ app.controller('FilesCtrl', function($scope, $http, $ionicLoading) {
 	$scope.rmFile = function (file) {
 		console.log("Attemp to remove a file")
 	}
+
+
+	var getFileType = function (file, callback) {
+		var music = ["mp3","m3u","wma",""];
+		
+		var reg = new RegExp(".","g");
+		var ext = path.split(reg);
+		console.log(ext);
+		// Test si c'est un film
+
+	}
+
 });
