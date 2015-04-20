@@ -18,7 +18,7 @@
             <div ng-hide="!hideAuto" class="row responsive-sm">
             	<div class="col">
 	                <div class="bar bar-header">
-	  					<h1 class="title">{{loginData.ip}}: {{loginData.port}}</h1>
+	  					<h1 class="title">{{loginData.username2}}<br/>{{loginData.ip}}: {{loginData.port}}</h1>
 					</div>
 				</div>
 				<div class ="col">
@@ -30,6 +30,14 @@
 				        <span class="input-label">Mot de passe</span>
 				        <input type="password" placeholder="Mot de passe" ng-model="loginData.password" required>
 			        </label>
+				        <div class="padding">
+	          <button type="submit" class="button button-block button-positive connexion" ng-click="connected=true" ng-hide="connected">
+	            <i class="icon ion-checkmark icon-connexion"></i>Connexion
+	          </button>
+
+	          <button class="button button-block button-assertive" ng-click="logout(); connected=false" ng-show="connected">
+	            <i class="icon ion-close icon-deconnexion"></i>Déconnecter
+	          </button>
 			    </div>
             </div>
         </ion-content>
