@@ -18,9 +18,10 @@
             <div ng-hide="!hideAuto" class="row responsive-sm">
             	<div class="col">
 	                <div class="bar bar-header">
-	  					<h1 class="title">{{loginData.username2}}<br/>{{loginData.ip}}: {{loginData.port}}</h1>
+	  					<h1 class="title">{{loginData.username2}} {{loginData.ip}}: {{loginData.port}}</h1>
 					</div>
 				</div>
+				<form ng-submit="doLogin()">
 				<div class ="col">
 			        <label class="item item-input item-floating-label">
 				        <span class="input-label">Nom d'utilisateur</span>
