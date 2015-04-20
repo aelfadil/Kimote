@@ -56,6 +56,9 @@ app.controller('SideMenuCtrl', function($scope, $cookieStore, $ionicModal, $ioni
 		$scope.modal.hide();
 	};
 
+	/* Fonctions Auto Login */
+
+
 	$scope.scanAuto= function (){
 	        ZeroConf.list("_http._tcp.local.",5000,function(users){
 	        $scope.users=users.service;
@@ -64,6 +67,14 @@ app.controller('SideMenuCtrl', function($scope, $cookieStore, $ionicModal, $ioni
 	     
 	    }) 
 	    };
+
+	$scope.hideAuto = false;
+	$scope.hideChoices = function(user){
+		$scope.hideAuto = !$scope.hideAuto;
+		$scope.loginData.ip=user.addresses[0];
+		$scope.loginData.port=user.port;
+		
+	};
 
 	$scope.loadingScanAuto = function(){
 		$ionicLoading.show({
