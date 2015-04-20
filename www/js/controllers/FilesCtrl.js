@@ -1,7 +1,7 @@
 app.controller('FilesCtrl', function($scope, $http, $ionicLoading) {
 
 	var path = "";
-	$scope.title = "Mon titre";
+	$scope.title = "Sources";
 
 	$scope.getStart = function() {
 		// $scope.files = {};
@@ -16,6 +16,7 @@ app.controller('FilesCtrl', function($scope, $http, $ionicLoading) {
 		$http.jsonp(complete_url, {params: {callback: 'JSON_CALLBACK', format: 'json'}})
 		.success(function(data, status, headers, config) {
             $scope.files = data.result.sources;
+			$scope.title = "Sources";
             $ionicLoading.hide();
 		})
 		.error(function(data, status, headers, config) {
@@ -42,6 +43,7 @@ app.controller('FilesCtrl', function($scope, $http, $ionicLoading) {
             } else {
 				$scope.files = data.result.files;
 				path = dir;
+				$scope.title = path;
 			}
 		})
 		.error(function(data, status, headers, config) {
@@ -74,17 +76,12 @@ app.controller('FilesCtrl', function($scope, $http, $ionicLoading) {
 		$scope.getDir(dir+"/");
 	}
 
-	$scope.rmFile = function (file) {
-		console.log("Attemp to remove a file")
-	}
-
-
 	var getFileType = function (file, callback) {
-		var music = ["mp3","m3u","wma",""];
+		var music = ["mp3","m3u","wma"];
 		
-		var reg = new RegExp(".","g");
-		var ext = path.split(reg);
-		console.log(ext);
+		var reg = /\.[0-9a-z]{1,5}$/i;
+		var ext = file.match(reg);
+		console.log("file reg: "+ext);
 		// Test si c'est un film
 
 	}
