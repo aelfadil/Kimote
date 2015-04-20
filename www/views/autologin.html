@@ -15,18 +15,23 @@
               <h4>{{user.addresses[0]}} : {{user.port}}</h4>
             </a>
             </div>
-            <div ng-hide="!hideAuto" >
-               test: {{loginData.ip}}: {{loginData.port}}
-                <label class="item item-input item-floating-label">
-          <span class="input-label">Nom d'utilisateur</span>
-          <input type="text" placeholder="Nom d'utilisateur" ng-model="loginData.username" required>
-        </label>
-        <label class="item item-input item-floating-label">
-          <span class="input-label">Mot de passe</span>
-          <input type="password" placeholder="Mot de passe" ng-model="loginData.password" required>
-        </label>
-
-            <div>
+            <div ng-hide="!hideAuto" class="row responsive-sm">
+            	<div class="col">
+	                <div class="bar bar-header">
+	  					<h1 class="title">{{loginData.ip}}: {{loginData.port}}</h1>
+					</div>
+				</div>
+				<div class ="col">
+			        <label class="item item-input item-floating-label">
+				        <span class="input-label">Nom d'utilisateur</span>
+				        <input type="text" placeholder="Nom d'utilisateur" ng-model="loginData.username" required>
+				    </label>
+				    <label class="item item-input item-floating-label">
+				        <span class="input-label">Mot de passe</span>
+				        <input type="password" placeholder="Mot de passe" ng-model="loginData.password" required>
+			        </label>
+			    </div>
+            </div>
         </ion-content>
             </div>
 
