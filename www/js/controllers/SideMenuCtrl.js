@@ -56,31 +56,6 @@ app.controller('SideMenuCtrl', function($scope, $cookieStore, $ionicModal, $ioni
 		$scope.modal.hide();
 	};
 
-	/* Fonctions Auto Login */
-
-
-	$scope.scanAuto= function (){
-	        ZeroConf.list("_http._tcp.local.",5000,function(users){
-	        $scope.users=users.service;
-	    },function(users){
-	        alert("not found");
-	     
-	    }) 
-	    };
-
-	$scope.hideAuto = false;
-	$scope.hideChoices = function(user){
-		$scope.hideAuto = !$scope.hideAuto;
-		$scope.loginData.ip=user.addresses[0];
-		$scope.loginData.port=user.port;
-		
-	};
-
-	$scope.loadingScanAuto = function(){
-		$ionicLoading.show({
-      			duration: 5000
-    		 })
-	};
 
 		/* Vue modal pour la connexion*/
 	$ionicModal.fromTemplateUrl('views/autologin.html', {
@@ -152,4 +127,35 @@ app.controller('SideMenuCtrl', function($scope, $cookieStore, $ionicModal, $ioni
 	$scope.loginData.port = parseInt($cookieStore.get('port'));
 	$scope.loginData.username = $cookieStore.get('username');
 	$scope.loginData.password = $cookieStore.get('password');
+
+
+	/* Fonctions Auto Login */
+
+	$scope.hideAuto = false;
+
+	$scope.scanAuto= function (){
+	        $scope.hideAuto = false;
+	        ZeroConf.list("_http._tcp.local.",5000,function(users){
+	        $scope.users=users.service;
+	    },function(users){
+	        alert("not found");
+	     
+	    }) 
+	    };
+
+	$scope.loadingScanAuto = function(){
+		$ionicLoading.show({
+      			duration: 5000
+    		 })
+	};
+
+	$scope.hideChoices = function(user){
+		$scope.hideAuto = !$scope.hideAuto;
+		$scope.loginData.ip=user.addresses[0];
+		$scope.loginData.port=user.port;
+		$scope.loginData.username2=user.name;
+		
+	};
+
+	
 });
