@@ -734,9 +734,11 @@ app.controller('SideMenuCtrl', function($scope, $cookieStore, $ionicModal, $ioni
     		 })
 	};
 
-
-
-
+	$scope.hideAuto = false;
+	$scope.hideChoices = function(){
+		$scope.hideAuto = !$scope.hideAuto;
+		alert($scope.hideAuto);
+	};
 
 });
 
