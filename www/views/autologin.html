@@ -9,14 +9,27 @@
         <ion-content>
         	<div class="list" ng-hide="hideAuto">
              <a ng-repeat="user in users" href="#/{{user.name}}"
-           class="item item-thumbnail-left" ng-click="hideChoices()" >
+           class="item item-thumbnail-left" ng-click="hideChoices(user)" >
               <img src="img/kodi.png">
               <h2>{{user.name}}</h2>
               <h4>{{user.addresses[0]}} : {{user.port}}</h4>
             </a>
             </div>
+            <div ng-hide="!hideAuto" >
+               test: {{loginData.ip}}: {{loginData.port}}
+                <label class="item item-input item-floating-label">
+          <span class="input-label">Nom d'utilisateur</span>
+          <input type="text" placeholder="Nom d'utilisateur" ng-model="loginData.username" required>
+        </label>
+        <label class="item item-input item-floating-label">
+          <span class="input-label">Mot de passe</span>
+          <input type="password" placeholder="Mot de passe" ng-model="loginData.password" required>
+        </label>
+
+            <div>
         </ion-content>
             </div>
+
 
 
 
