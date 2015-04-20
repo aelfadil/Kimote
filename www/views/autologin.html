@@ -17,9 +17,15 @@
             </div>
             <div ng-hide="!hideAuto" class="row responsive-sm">
             	<div class="col">
-	                <div class="bar bar-header">
-	  					<h1 class="title">{{loginData.username2}} {{loginData.ip}}: {{loginData.port}}</h1>
-					</div>
+            		<div class="list">
+	            		<a class="item item-thumbnail-left" href="#">
+			              <img src="img/kodi.png">
+			              <h2>{{loginData.username2}}</h2>
+			              <h4>{{loginData.ip}}: {{loginData.port}}</h4>
+			            </a>
+		            </div>
+				</div>
+				<div class="col">
 				</div>
 				<form ng-submit="doLogin()">
 				<div class ="col">
