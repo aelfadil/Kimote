@@ -30,11 +30,11 @@
 				</label>
 
 				<div class="padding">
-					<button type="submit" class="button button-block button-positive connexion" ng-click="connected=true" ng-hide="connected">
+					<button type="submit" class="button button-block button-positive connexion" ng-click="connected=true" ng-hide="stateCon">
 						<i class="icon ion-checkmark icon-connexion"></i>Connexion
 					</button>
 
-					<button class="button button-block button-assertive" ng-click="logout(); connected=false" ng-show="connected">
+					<button class="button button-block button-assertive" ng-click="logout();connected=false" ng-show="stateCon">
 						<i class="icon ion-close icon-deconnexion"></i>Déconnecter
 					</button>
 
