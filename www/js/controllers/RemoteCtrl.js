@@ -1,19 +1,54 @@
-app.controller('RemoteCtrl', function($scope,$http, $stateParams, $location, $ionicPopup, $timeout, Sounder, Manager, Runtime, Requester) {
+app.controller('RemoteCtrl', function($scope,$http, $stateParams, $location, $ionicPopup, $timeout, Sounder, Manager, Runtime, Requester, Logger) {
 
     $scope.model = {};
-    $scope.paused = Manager.getPaused();
-    $scope.played = Manager.getPlayed();
-
     $scope.model.runtime;
     $scope.model.temps;
     $scope.model.totaltime;
     $scope.model.playeractive;
 
+
+    $scope.getSync = function () {
+    	var playerInfos = Runtime.GetRuntime();
+    	
+    	 $scope.shuffled = playerInfos.shuffled;	
+        if(playerInfos.speed==0)
+        	$scope.played = false;
+        else 
+        	$scope.played = true;
+        
+        if(playerInfos.repeat == "off"){
+        	$scope.norepeat = true;
+        	$scope.repeatOne = false;
+        	$scope.repeatAll = false;
+
+        } else if(playerInfos.repeat == "one"){
+        	$scope.repeatOne = true;
+        	$scope.repeatAll = false; 
+       		$scope.norepeat = false;
+       		
+       		}else{ 
+       		$scope.repeatAll = true; 
+       		$scope.norepeat = false;
+       		$scope.repeatOne = false;
+       		}
+       	if(Logger.getConn() == true){
+       		Requester.GetApplicationProperties( function (data) {
+     			$scope.muted = data.result.muted;
+     			console.log($scope.muted);
+   	    	});
+       	}
+
+    };
+
+    setInterval($scope.getSync,200);
+
+
     $scope.getRuntime = function () {
-        $scope.model.runtime = Runtime.GetRuntime().moment2;
-        $scope.model.temps = Runtime.GetRuntime().temps;
-        $scope.model.totaltime = Runtime.GetRuntime().totaltime;
-        $scope.model.playeractive = Runtime.GetRuntime().playeractive;
+    	var infos = Runtime.GetRuntime();
+        $scope.model.runtime = infos.moment2;
+        $scope.model.temps = infos.temps;
+        $scope.model.totaltime = infos.totaltime;
+        $scope.model.playeractive = infos.playeractive;
     };
 
     setInterval($scope.getRuntime,500);
@@ -49,35 +84,47 @@ app.controller('RemoteCtrl', function($scope,$http, $stateParams, $location, $io
             return true;
     };
 
-    $scope.muted = Sounder.getMuted();
-    $scope.volume = Sounder.getVolume();
-    $scope.sound = Sounder.getVolume();
-
-    $scope.setVol = function () {
-        Sounder.SetVol($scope.model.sound);
-        $scope.model.sound = Sounder.getVolume();
+    $scope.requestMute = function () {
+    	
+		method = "Application.SetMute";
+		params = '{"mute":"toggle"}';
+		Requester.sendRequest($http, method, params);
     };
 
-    $scope.requestMute = function (muted) {
-        method = "Application.SetMute";
-		params = '{"mute":' + muted + '}';
-        $scope.muted = !muted;
+	$scope.requestPlayer = function(input) {
 
-        Requester.sendRequest($http, method, params);
-    };
+		switch(input){
+			case "shuffle" :
+			method = 'Player.SetShuffle';
+			params = '"shuffle":' + !Runtime.GetRuntime().shuffled;
+			break;
 
-    $scope.showAlert = function() {
-        var alertPopup = $ionicPopup.alert({
-            title: 'Volume',
-            template: '<input type="range" name="volume" ng-model="model.sound" min="0" max="100" ng-change="setVol()">',
-            scope: $scope
-        });
+			case "repeat" :
+			method = 'Player.SetRepeat';
+			if(Runtime.GetRuntime().repeat == "off")
+			params = '"repeat": "one"';
+			else if(Runtime.GetRuntime().repeat == "one")
+				params = '"repeat" : "all"';
+				else 
+					params = '"repeat" : "off"';
+			break;
+			
+			default :
+			method="";
+			params="";
+			break;
 
-        alertPopup.then(function(res) {
-            console.log('In alertPopup.then');
-        });
-    };
+		}
 
+		Requester.sendRequestWithParamsForPlayer($http, method, params);
+		};
+
+	$scope.requestOSD = function () {
+		method = "Input.ShowOSD";
+		params = "{}";
+		Requester.sendRequest($http, method, params);
+	};
+	
     $scope.request = function (input) {
         switch (input) {
 
@@ -100,13 +147,9 @@ app.controller('RemoteCtrl', function($scope,$http, $stateParams, $location, $io
             case "volumeDown" :
                 Requester.requestApplication(input, $scope.volume);
                 break;
-
             default :
                 Requester.requestInput(input);
                 break;
         }
-
-        $scope.muted = Sounder.getMuted();
-        $scope.volume = Sounder.getVolume();
     };
 });

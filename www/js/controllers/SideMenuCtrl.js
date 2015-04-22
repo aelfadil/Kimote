@@ -3,12 +3,18 @@ app.controller('SideMenuCtrl', function($scope, $cookieStore, $ionicModal, $ioni
     /*************** bouton son ******************/
 
     $scope.soundbar = {};
-    $scope.sound = Sounder.getVolume();
+
+    $scope.getSync = function () {
+    	Requester.GetApplicationProperties( function (data) {
+     			$scope.sound = data.result.volume;
+   	    	});
+    };
+    setInterval($scope.getSync,150);
 
     $scope.setVol = function () {
         Sounder.SetVol($scope.soundbar.sound);
-        $scope.soundbar.sound = Sounder.getVolume();
     };
+
 
     $scope.showAlert = function() {
         var alertPopup = $ionicPopup.alert({
